@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fitness OS | Edit & Sync</title>
+    <title>FitnessOS</title>
+    
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3048/3048398.png">
+    <meta name="apple-mobile-web-app-title" content="FitnessOS">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#020617">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono&display=swap');
@@ -26,29 +33,29 @@
                     <div id="p-bar" class="bg-blue-500 h-full transition-all duration-700 shadow-[0_0_10px_#3b82f6]" style="width: 0%"></div>
                 </div>
             </div>
-            <button onclick="shareSummary()" class="bg-blue-600 text-[10px] px-3 py-1 rounded-lg font-bold">SHARE</button>
+            <button onclick="shareSummary()" class="bg-blue-600 text-[10px] px-3 py-1 rounded-lg font-bold uppercase">Share</button>
         </div>
     </div>
 
     <div class="max-w-xl mx-auto px-4 pt-16 pb-32">
         <div class="flex justify-between items-end mb-8">
             <div>
-                <h1 class="text-2xl font-black text-white italic tracking-tighter uppercase">Fitness<span class="text-blue-500">OS</span></h1>
-                <p class="text-[10px] text-slate-500 font-mono uppercase tracking-widest">User: Carla's Husband</p>
+                <h1 class="text-2xl font-black text-white italic tracking-tighter uppercase leading-none">Fitness<span class="text-blue-500">OS</span></h1>
+                <p class="text-[9px] text-slate-500 font-mono uppercase tracking-[0.2em]">Cloud Database: Active</p>
             </div>
             <div class="text-right">
                 <div id="overall-grade" class="text-5xl font-black text-emerald-400 leading-none">A+</div>
-                <p class="text-[10px] text-slate-500 uppercase font-mono tracking-widest">Status</p>
+                <p class="text-[10px] text-slate-500 uppercase font-mono tracking-widest">Grade</p>
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4 mb-6 text-center font-mono">
             <div class="glass-card p-4 rounded-3xl border-b-2 border-blue-500/50">
-                <p class="text-[9px] text-slate-500 uppercase">Protein</p>
+                <p class="text-[9px] text-slate-500 uppercase mb-1">Protein</p>
                 <p class="text-2xl font-black text-blue-400"><span id="total-p">0</span>g</p>
             </div>
             <div class="glass-card p-4 rounded-3xl border-b-2 border-slate-500/50">
-                <p class="text-[9px] text-slate-500 uppercase">Calories</p>
+                <p class="text-[9px] text-slate-500 uppercase mb-1">Calories</p>
                 <p class="text-2xl font-black text-white" id="total-cal">0</p>
             </div>
         </div>
@@ -60,7 +67,7 @@
             </div>
             
             <div class="flex gap-2 mb-6">
-                <input id="food-input" type="text" placeholder="Quick Search..." class="flex-1 bg-slate-800/50 rounded-2xl p-4 text-sm focus:ring-1 focus:ring-blue-500 outline-none border-none">
+                <input id="food-input" type="text" placeholder="Quick Search (e.g. 100g oats)" class="flex-1 bg-slate-800/50 rounded-2xl p-4 text-sm focus:ring-1 focus:ring-blue-500 outline-none border-none">
                 <button onclick="searchFood()" class="bg-slate-800 px-4 rounded-2xl text-blue-400 font-bold">ADD</button>
             </div>
 
@@ -69,7 +76,7 @@
         </div>
 
         <div class="glass-card p-4 rounded-3xl mb-6 border-l-4 border-yellow-500">
-            <h3 class="text-[10px] font-bold text-yellow-500 uppercase mb-3 tracking-widest font-mono">Library</h3>
+            <h3 class="text-[10px] font-bold text-yellow-500 uppercase mb-3 tracking-widest font-mono">Meal Library</h3>
             <div id="meal-library" class="flex flex-wrap gap-2"></div>
         </div>
 
@@ -83,23 +90,29 @@
             </div>
             <div class="glass-card p-5 rounded-3xl border-l-4 border-orange-500">
                 <h3 class="text-[10px] text-orange-500 uppercase mb-3 font-mono tracking-widest font-bold">Today's Meal Plan</h3>
-                <textarea id="meal-plan-input" placeholder="Meal 1: Oats & Whey..." class="w-full bg-transparent border-none p-0 text-sm text-slate-400 focus:ring-0 h-16 resize-none"></textarea>
+                <textarea id="meal-plan-input" placeholder="Meal 1: Oats & Whey..." class="w-full bg-transparent border-none p-0 text-sm text-slate-400 focus:ring-0 h-16 resize-none custom-scrollbar"></textarea>
             </div>
         </div>
 
-        <div class="glass-card p-6 rounded-3xl">
+        <div class="glass-card p-6 rounded-3xl mb-12">
             <div class="mb-6">
-                <label class="flex justify-between text-[10px] font-bold mb-4 font-mono"><span>WORKOUT</span><span id="work-val" class="text-blue-400">50%</span></label>
+                <label class="flex justify-between text-[10px] font-bold mb-4 font-mono uppercase tracking-widest"><span>Workout Intensity</span><span id="work-val" class="text-blue-400">50%</span></label>
                 <input type="range" id="workout-range" value="50" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer">
             </div>
             <div class="grid grid-cols-2 gap-4 font-mono text-xs text-center">
-                <input type="number" id="sleep-hours" placeholder="Sleep Hrs" class="bg-slate-800 rounded-xl p-3 border-none focus:ring-1 focus:ring-blue-500">
-                <input type="number" id="cardio-mins" placeholder="Cardio Min" class="bg-slate-800 rounded-xl p-3 border-none focus:ring-1 focus:ring-blue-500">
+                <div>
+                    <label class="block text-[10px] text-slate-600 mb-2 uppercase">Sleep Hrs</label>
+                    <input type="number" id="sleep-hours" placeholder="8" class="bg-slate-800 rounded-xl p-3 w-full border-none focus:ring-1 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-600 mb-2 uppercase">Cardio Min</label>
+                    <input type="number" id="cardio-mins" placeholder="30" class="bg-slate-800 rounded-xl p-3 w-full border-none focus:ring-1 focus:ring-blue-500">
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="macro-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+    <div id="macro-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm">
         <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-emerald-500/30">
             <h2 id="modal-title" class="text-xl font-black mb-6 text-white italic uppercase tracking-tighter">Log Meal</h2>
             <div class="space-y-4">
@@ -111,31 +124,31 @@
                 </div>
                 <div id="save-lib-container" class="flex items-center gap-2 text-[10px] text-slate-500 font-mono">
                     <input type="checkbox" id="save-to-library" class="w-4 h-4 rounded accent-emerald-500">
-                    SAVE TO FAVORITES
+                    SAVE TO MEAL LIBRARY
                 </div>
                 <div class="flex gap-2 pt-4">
-                    <button onclick="closeModal()" class="flex-1 bg-slate-800 py-4 rounded-xl text-xs font-bold uppercase tracking-widest">Cancel</button>
-                    <button id="modal-action-btn" onclick="logManualMeal()" class="flex-1 bg-emerald-500 text-black py-4 rounded-xl text-xs font-bold uppercase tracking-widest">Log Meal</button>
+                    <button onclick="closeModal()" class="flex-1 bg-slate-800 py-4 rounded-xl text-xs font-bold uppercase">Cancel</button>
+                    <button id="modal-action-btn" onclick="logManualMeal()" class="flex-1 bg-emerald-500 text-black py-4 rounded-xl text-xs font-bold uppercase">Save</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="fixed bottom-0 left-0 w-full p-4 bg-slate-900/90 backdrop-blur-xl border-t border-slate-800 z-50">
+    <div class="fixed bottom-0 left-0 w-full p-4 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 z-40 safe-area-bottom">
         <div class="max-w-xl mx-auto flex gap-3">
-            <button onclick="alert('Google Sheet Sync Active')" class="flex-1 bg-white text-black font-black py-4 rounded-2xl uppercase tracking-tighter text-sm">Archieve Day</button>
+            <button onclick="alert('Day synced with Google Sheets')" class="flex-1 bg-white text-black font-black py-4 rounded-2xl uppercase tracking-tighter text-sm active:scale-95 transition-all">Archive Day</button>
             <button onclick="resetDay()" class="bg-slate-800 px-6 rounded-2xl text-slate-400">↺</button>
         </div>
     </div>
 
     <script>
         const PIN = "0805";
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmdHg7YupEXPLeEFVxdB_u3FDROh_vvbGUGhgLfOwuWmBRwdBZPt1Vp6A3JeUxbZUtbQ/exec";
-        const STORAGE_KEY = "fitness_os_v2";
-        const LIB_KEY = "fitness_os_lib";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmdHg7YupEXPLeEFVxdB_u3FDROh_vvbGUGhgLfOwuWmBRwdBZPt1Vp6A3JeUxbZUtbQ/exec"; 
+        const STORAGE_KEY = "fitness_os_v2_data";
+        const LIB_KEY = "fitness_os_v2_lib";
         const TARGET_P = 180;
 
-        let dailyMeals = []; // Array of meal objects: {id, name, p, c, f, cal}
+        let dailyMeals = [];
         let editingMealId = null;
 
         const MY_KITCHEN = {
@@ -146,9 +159,9 @@
         };
 
         window.onload = () => {
-            const access = prompt("ENTER PIN:");
+            const access = prompt("PIN REQUIRED:");
             if (access !== PIN) {
-                document.body.innerHTML = "<div class='h-screen flex items-center justify-center text-red-500 font-mono'>UNAUTHORIZED</div>";
+                document.body.innerHTML = "<div class='h-screen flex items-center justify-center text-red-500 font-mono text-xs'>UNAUTHORIZED ACCESS</div>";
                 document.body.style.opacity = "1";
             } else {
                 document.getElementById('app').style.opacity = "1";
@@ -158,7 +171,6 @@
             }
         };
 
-        // --- NUTRITION CORE ---
         function openModal(id = null) {
             editingMealId = id;
             const modal = document.getElementById('macro-modal');
@@ -172,14 +184,10 @@
                 document.getElementById('manual-p').value = meal.p;
                 document.getElementById('manual-c').value = meal.c;
                 document.getElementById('manual-f').value = meal.f;
-                title.innerText = "Edit Entry";
-                btn.innerText = "Update";
-                libRow.classList.add('hidden');
+                title.innerText = "Edit Entry"; btn.innerText = "Update"; libRow.classList.add('hidden');
             } else {
                 document.querySelectorAll('#macro-modal input:not([type=checkbox])').forEach(i => i.value = "");
-                title.innerText = "Log Meal";
-                btn.innerText = "Log Meal";
-                libRow.classList.remove('hidden');
+                title.innerText = "Log Meal"; btn.innerText = "Log Meal"; libRow.classList.remove('hidden');
             }
             modal.classList.remove('hidden');
         }
@@ -201,9 +209,7 @@
                 dailyMeals.push({ id: Date.now(), name, p, c, f, cal });
             }
 
-            closeModal();
-            saveAndRefresh();
-            sendToSheet(name, p, c, f, cal);
+            closeModal(); saveAndRefresh(); sendToSheet(name, p, c, f, cal);
         }
 
         function deleteMeal(id) {
@@ -217,60 +223,71 @@
             for (let item in MY_KITCHEN) {
                 if (input.includes(item)) {
                     const data = MY_KITCHEN[item];
-                    let multiplier = 1;
-                    const amountMatch = input.match(/\d+/);
-                    if (amountMatch) {
-                        const num = parseInt(amountMatch[0]);
-                        multiplier = (input.includes("g") || input.includes("ml")) ? num / 100 : num;
-                    }
-                    const p = data.p * multiplier, c = data.c * multiplier, f = data.f * multiplier;
+                    let mult = 1;
+                    const amount = input.match(/\d+/);
+                    if (amount) mult = (input.includes("g") || input.includes("ml")) ? parseInt(amount[0]) / 100 : parseInt(amount[0]);
+                    const p = data.p * mult, c = data.c * mult, f = data.f * mult;
                     dailyMeals.push({ id: Date.now(), name: input, p, c, f, cal: (p*4)+(c*4)+(f*9) });
-                    saveAndRefresh();
-                    sendToSheet(input, p, c, f, (p*4)+(c*4)+(f*9));
+                    saveAndRefresh(); sendToSheet(input, p, c, f, (p*4)+(c*4)+(f*9));
                     break;
                 }
             }
             document.getElementById('food-input').value = "";
         }
 
-        // --- UI RENDERING ---
         function renderFoodLog() {
             const log = document.getElementById('food-log');
             log.innerHTML = dailyMeals.map(m => `
-                <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-2xl border border-slate-800">
+                <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-2xl border border-slate-800 animate-in fade-in slide-in-from-bottom-2">
                     <div class="flex-1">
-                        <p class="text-[11px] font-bold text-slate-100 uppercase tracking-tight truncate w-32">${m.name}</p>
+                        <p class="text-[11px] font-bold text-slate-100 uppercase tracking-tight">${m.name}</p>
                         <p class="text-[9px] text-slate-500 font-mono">${m.p}P | ${m.c}C | ${m.f}F</p>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="openModal(${m.id})" class="text-slate-500 hover:text-blue-400 text-[10px] font-bold px-2 uppercase">Edit</button>
-                        <button onclick="deleteMeal(${m.id})" class="text-slate-600 hover:text-red-500 text-[10px] font-bold px-2 uppercase">Del</button>
+                        <button onclick="openModal(${m.id})" class="text-slate-500 text-[10px] font-bold uppercase">Edit</button>
+                        <button onclick="deleteMeal(${m.id})" class="text-slate-600 text-[10px] font-bold uppercase">Del</button>
                     </div>
                 </div>
             `).join('');
             
-            // Update Totals
-            const totals = dailyMeals.reduce((acc, m) => ({p: acc.p + m.p, cal: acc.cal + m.cal}), {p:0, cal:0});
-            document.getElementById('total-p').innerText = totals.p.toFixed(1);
-            document.getElementById('total-cal').innerText = Math.round(totals.cal);
+            const sums = dailyMeals.reduce((acc, m) => ({p: acc.p + m.p, cal: acc.cal + m.cal}), {p:0, cal:0});
+            document.getElementById('total-p').innerText = sums.p.toFixed(1);
+            document.getElementById('total-cal').innerText = Math.round(sums.cal);
+            calculateGrade(sums.p);
         }
 
         function renderLibrary() {
             const lib = JSON.parse(localStorage.getItem(LIB_KEY)) || [];
             document.getElementById('meal-library').innerHTML = lib.map(m => `
-                <button onclick="quickLogFromLib('${m.name}', ${m.p}, ${m.c}, ${m.f})" class="bg-slate-800 px-3 py-2 rounded-xl text-[10px] font-bold border border-slate-700 active:border-yellow-500 uppercase">${m.name}</button>
+                <button onclick="quickLogLib('${m.name}', ${m.p}, ${m.c}, ${m.f})" class="bg-slate-800 px-3 py-2 rounded-xl text-[10px] font-bold border border-slate-700 uppercase">${m.name}</button>
             `).join('');
         }
 
-        function quickLogFromLib(name, p, c, f) {
+        function quickLogLib(name, p, c, f) {
             dailyMeals.push({ id: Date.now(), name, p, c, f, cal: (p*4)+(c*4)+(f*9) });
             saveAndRefresh();
         }
 
-        // --- UTILS & SYNC ---
+        function calculateGrade(p) {
+            const w = document.getElementById('workout-range').value;
+            const s = document.getElementById('sleep-hours').value || 0;
+            const score = (Math.min(p/TARGET_P, 1)*50) + (w*0.3) + (Math.min(s/8, 1)*20);
+            let grade = 'F', color = 'text-red-500';
+            if (score >= 90) { grade = 'A+'; color = 'text-emerald-400'; }
+            else if (score >= 70) { grade = 'B'; color = 'text-blue-400'; }
+            else if (score >= 50) { grade = 'C'; color = 'text-yellow-500'; }
+            
+            const display = document.getElementById('overall-grade');
+            display.innerText = grade;
+            display.className = `text-5xl font-black leading-none ${color}`;
+            
+            const pPct = Math.min((p/TARGET_P)*100, 100);
+            document.getElementById('p-bar').style.width = pPct + "%";
+            document.getElementById('p-pct').innerText = Math.round(pPct) + "%";
+            document.getElementById('work-val').innerText = w + "%";
+        }
+
         function saveAndRefresh() {
-            calculateGrade();
-            renderFoodLog();
             const data = {
                 meals: dailyMeals,
                 w: document.getElementById('workout-range').value,
@@ -281,6 +298,7 @@
                 date: new Date().toLocaleDateString()
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            renderFoodLog();
         }
 
         function loadData() {
@@ -292,33 +310,15 @@
                 document.getElementById('cardio-mins').value = saved.c;
                 document.getElementById('water-total').innerText = saved.water;
                 document.getElementById('meal-plan-input').value = saved.plan;
-                calculateGrade();
             }
-        }
-
-        function calculateGrade() {
-            const p = dailyMeals.reduce((sum, m) => sum + m.p, 0);
-            const w = document.getElementById('workout-range').value;
-            const s = document.getElementById('sleep-hours').value || 0;
-            const score = (Math.min(p/TARGET_P, 1)*50) + (w*0.3) + (Math.min(s/8, 1)*20);
-            let grade = 'F', color = 'text-red-500';
-            if (score >= 90) { grade = 'A+'; color = 'text-emerald-400'; }
-            else if (score >= 70) { grade = 'B'; color = 'text-blue-400'; }
-            else if (score >= 50) { grade = 'C'; color = 'text-yellow-500'; }
-            const display = document.getElementById('overall-grade');
-            display.innerText = grade;
-            display.className = `text-5xl font-black leading-none ${color}`;
-            document.getElementById('p-bar').style.width = Math.min((p/TARGET_P)*100, 100) + "%";
-            document.getElementById('p-pct').innerText = Math.round(Math.min((p/TARGET_P)*100, 100)) + "%";
-            document.getElementById('work-val').innerText = w + "%";
         }
 
         function shareSummary() {
             const p = document.getElementById('total-p').innerText;
             const cal = document.getElementById('total-cal').innerText;
             const grade = document.getElementById('overall-grade').innerText;
-            const text = `FITNESS OS - ${new Date().toLocaleDateString()}\nGrade: ${grade}\nProtein: ${p}g\nCalories: ${cal}kcal\nSleep: ${document.getElementById('sleep-hours').value}hrs`;
-            navigator.clipboard.writeText(text).then(() => alert("Summary copied!"));
+            const text = `FITNESS OS LOG\nGrade: ${grade}\nProtein: ${p}g\nCalories: ${cal}kcal`;
+            navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
         }
 
         function addWater() {
@@ -337,8 +337,8 @@
         }
 
         async function sendToSheet(name, p, c, f, cal) {
-            const payload = { 
-                name, p, c, f, cal, 
+            if(GOOGLE_SCRIPT_URL.includes("PASTE")) return;
+            const payload = { name, p, c, f, cal, 
                 workout: document.getElementById('workout-range').value,
                 sleep: document.getElementById('sleep-hours').value || 0,
                 cardio: document.getElementById('cardio-mins').value || 0
@@ -346,7 +346,7 @@
             fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
         }
 
-        function resetDay() { if(confirm("RESET CACHE?")) { localStorage.clear(); location.reload(); } }
+        function resetDay() { if(confirm("Wipe cache?")) { localStorage.clear(); location.reload(); } }
         document.querySelectorAll('input, textarea').forEach(i => i.addEventListener('input', saveAndRefresh));
     </script>
 </body>
