@@ -17,10 +17,13 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono&display=swap');
         body { background: #020617; font-family: 'Inter', sans-serif; color: #e2e8f0; margin: 0; overflow-x: hidden; }
-        .glass-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .active-tap:active { transform: scale(0.95); opacity: 0.8; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .recipe-gradient { background: linear-gradient(180deg, rgba(30,41,59,0) 0%, rgba(15,23,42,1) 100%); }
+        .custom-scrollbar::-webkit-scrollbar { height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        #workout-section { max-height: 500px; opacity: 1; margin-bottom: 1.5rem; }
+        .hidden-workout { max-height: 0 !important; opacity: 0 !important; margin-bottom: 0 !important; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -45,14 +48,14 @@
                         <div id="p-bar" class="bg-blue-500 h-full transition-all duration-700 shadow-[0_0_8px_#3b82f6]" style="width: 0%"></div>
                     </div>
                 </div>
-                <button id="recipe-ai-btn" class="bg-amber-500/20 text-amber-400 text-[8px] px-2 py-1 rounded font-bold uppercase border border-amber-500/30 active-tap">AI Recipe</button>
+                <button id="recipe-ai-btn" class="bg-amber-500/20 text-amber-400 text-[8px] px-2 py-1 rounded font-bold uppercase border border-amber-500/30 active-tap italic">AI Recipe</button>
             </div>
         </div>
 
         <div class="max-w-xl mx-auto px-4 pt-16 pb-32">
             <div class="flex justify-between items-start mb-8">
                 <div class="flex items-center gap-3">
-                    <img src="https://cdn-icons-png.flaticon.com/512/84/84145.png" class="w-8 h-8 invert opacity-80" alt="Dumbbell">
+                    <img src="https://cdn-icons-png.flaticon.com/512/84/84145.png" class="w-8 h-8 invert opacity-80">
                     <h1 class="text-2xl font-black italic tracking-tighter uppercase leading-none">Fitness<span id="brand-suffix" class="text-blue-500">OS</span></h1>
                 </div>
                 <div id="overall-grade" class="text-5xl font-black text-emerald-400 leading-none">A+</div>
@@ -81,14 +84,14 @@
             </div>
 
             <div class="glass-card p-5 rounded-3xl mb-6 border-l-4 border-cyan-500">
-                <p class="text-[9px] text-cyan-500 uppercase mb-3 font-mono font-bold tracking-widest">Hydration Control</p>
+                <p class="text-[9px] text-cyan-500 uppercase mb-3 font-mono font-bold tracking-widest">Hydration</p>
                 <div class="flex items-center justify-between">
                     <button id="water-minus" class="bg-slate-800 text-white w-12 h-12 rounded-2xl font-black active-tap border border-slate-700">−</button>
                     <div class="text-center">
                         <input type="number" id="water-total" value="0" class="bg-transparent text-3xl font-black font-mono text-white w-24 text-center outline-none border-none p-0 focus:ring-0">
-                        <p class="text-[8px] text-slate-500 uppercase tracking-widest">ml total</p>
+                        <p class="text-[8px] text-slate-500 uppercase tracking-widest">milliliters</p>
                     </div>
-                    <button id="water-plus" class="bg-cyan-600 text-white w-12 h-12 rounded-2xl font-black active-tap shadow-lg shadow-cyan-900/30">+</button>
+                    <button id="water-plus" class="bg-cyan-600 text-white w-12 h-12 rounded-2xl font-black active-tap shadow-lg">+</button>
                 </div>
             </div>
 
@@ -97,21 +100,21 @@
                     <h3 class="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Nutrition Log</h3>
                     <button id="add-meal-btn" class="bg-emerald-500 text-black font-black w-8 h-8 rounded-full shadow-lg text-lg active-tap">+</button>
                 </div>
-                <div id="food-log" class="space-y-2 max-h-40 overflow-y-auto pr-1 font-mono text-[10px]"></div>
+                <div id="food-log" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
             </div>
 
-            <div id="workout-section" class="glass-card p-6 rounded-3xl border-l-4 border-blue-500 mb-6 transition-all duration-500">
+            <div id="workout-section" class="glass-card p-6 rounded-3xl border-l-4 border-blue-500 overflow-hidden">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-[9px] font-bold text-blue-400 uppercase tracking-widest font-mono">Plan Analysis (AI)</h3>
                     <span id="work-val" class="text-blue-400 font-black text-lg">0%</span>
                 </div>
-                <label class="w-full bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center cursor-pointer block mb-4">
+                <label class="w-full bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center cursor-pointer block">
                     <input type="file" id="workout-img" accept="image/*" class="hidden">
                     <span id="ai-status" class="text-[10px] text-slate-400 font-mono uppercase tracking-widest">Upload Plan Image</span>
                 </label>
             </div>
 
-            <div class="glass-card p-5 rounded-3xl mb-12 border-l-4 border-purple-500 flex justify-between items-center">
+            <div class="glass-card p-5 rounded-3xl mb-12 border-l-4 border-purple-500 flex justify-between items-center mt-6">
                 <h3 class="text-[9px] font-bold text-purple-400 uppercase font-mono tracking-widest">Rest Day Mode</h3>
                 <button id="rest-btn" class="bg-slate-800 text-[10px] font-bold px-5 py-2 rounded-full border border-slate-700 active-tap uppercase">Off</button>
             </div>
@@ -122,6 +125,11 @@
 
     <div id="macro-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
         <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-emerald-500/30">
+            <p class="text-[9px] text-slate-500 uppercase mb-2 font-bold font-mono tracking-widest">Recent Meals</p>
+            <div id="recent-meals-list" class="flex gap-2 overflow-x-auto pb-4 mb-4 custom-scrollbar">
+                <span class="text-[8px] text-slate-600 uppercase">Loading history...</span>
+            </div>
+
             <input id="m-name" type="text" placeholder="Meal Name" class="w-full bg-slate-900 p-4 rounded-xl mb-4 text-sm border-none outline-none text-white">
             <div class="grid grid-cols-3 gap-3 mb-6">
                 <input id="m-p" type="number" placeholder="P" class="bg-slate-900 p-4 rounded-xl text-center text-sm text-white">
@@ -135,23 +143,12 @@
         </div>
     </div>
 
-    <div id="recipe-modal" class="fixed inset-0 z-[70] hidden bg-black/95 flex flex-col p-6 overflow-y-auto">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-amber-400 font-black italic text-xl uppercase tracking-tighter">AI Macro Suggestion</h2>
-            <button onclick="document.getElementById('recipe-modal').classList.add('hidden')" class="text-slate-500 font-bold uppercase text-[10px]">Close</button>
-        </div>
-        <div id="recipe-content" class="text-slate-300 font-mono text-xs leading-relaxed space-y-4">
-            </div>
-        <div class="h-20"></div>
-    </div>
-
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
-        // CONFIG
         const PIN_CODE = "0805";
         const GEMINI_KEY = "AIzaSyBhHxGnIsxERj2-J0BADPPRyv0CXTfcWRU";
-        const GS_URL = "https://script.google.com/macros/s/AKfycbzmdHg7YupEXPLeEFVxdB_u3FDROh_vvbGUGhgLfOwuWmBRwdBZPt1Vp6A3JeUxbZUtbQ/exec";
+        const GS_URL = "https://script.google.com/macros/s/AKfycbyCteDvsJn5cL8gJu_qBkoVor9wjkd-yXN05QVSlw7M9Qe21SKXrciQXuMLKx2GRrNiKg/exec";
         
         const genAI = new GoogleGenerativeAI(GEMINI_KEY);
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -160,17 +157,16 @@
         let workoutScore = 0;
         let restMode = false;
 
-        // AUTH
         document.getElementById('unlock-btn').addEventListener('click', () => {
             if(document.getElementById('pin-input').value === PIN_CODE) {
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('main-app').style.opacity = '1';
                 document.getElementById('main-app').style.pointerEvents = 'auto';
                 load();
+                fetchRecent();
             } else { alert("ACCESS DENIED"); }
         });
 
-        // ACTIONS
         document.getElementById('rest-btn').addEventListener('click', toggleRest);
         document.getElementById('water-plus').addEventListener('click', () => updateWater(250));
         document.getElementById('water-minus').addEventListener('click', () => updateWater(-250));
@@ -179,18 +175,43 @@
         document.getElementById('save-meal-btn').addEventListener('click', logMeal);
         document.getElementById('archive-btn').addEventListener('click', archive);
         document.getElementById('workout-img').addEventListener('change', analyzeWorkout);
-        document.getElementById('recipe-ai-btn').addEventListener('click', generateRecipe);
+        document.getElementById('water-total').addEventListener('input', saveAndRefresh);
+
+        async function fetchRecent() {
+            try {
+                const response = await fetch(GS_URL);
+                const data = await response.json();
+                const list = document.getElementById('recent-meals-list');
+                list.innerHTML = data.map(m => `
+                    <button id="btn-${m.name.replace(/\s+/g, '')}" class="bg-slate-800 px-3 py-2 rounded-xl text-[9px] whitespace-nowrap border border-slate-700 text-slate-300 font-bold active-tap uppercase">${m.name}</button>
+                `).join('');
+                data.forEach(m => {
+                    document.getElementById(`btn-${m.name.replace(/\s+/g, '')}`).onclick = () => fillMeal(m);
+                });
+            } catch (e) { document.getElementById('recent-meals-list').innerText = "NO DATA"; }
+        }
+
+        window.fillMeal = (m) => {
+            document.getElementById('m-name').value = m.name;
+            document.getElementById('m-p').value = m.p;
+            document.getElementById('m-c').value = m.c;
+            document.getElementById('m-f').value = m.f;
+        };
 
         function toggleRest() {
             restMode = !restMode;
             const btn = document.getElementById('rest-btn');
+            const workoutSec = document.getElementById('workout-section');
             const suffix = document.getElementById('brand-suffix');
+            
             if(restMode) {
                 btn.innerText = "On"; btn.classList.replace('bg-slate-800', 'bg-purple-900/40');
+                workoutSec.classList.add('hidden-workout');
                 suffix.className = "text-purple-500";
                 workoutScore = 0;
             } else {
                 btn.innerText = "Off"; btn.classList.replace('bg-purple-900/40', 'bg-slate-800');
+                workoutSec.classList.remove('hidden-workout');
                 suffix.className = "text-blue-500";
             }
             saveAndRefresh();
@@ -214,13 +235,13 @@
         async function analyzeWorkout(e) {
             const file = e.target.files[0];
             if(!file || restMode) return;
-            document.getElementById('ai-status').innerText = "AI Reading Plan...";
+            document.getElementById('ai-status').innerText = "AI Scanning Plan...";
             const reader = new FileReader();
             reader.onloadend = async () => {
                 const base64 = reader.result.split(',')[1];
                 try {
                     const result = await model.generateContent([
-                        "Estimate workout intensity 0-100 based on exercises/reps in this photo. Return only the number.",
+                        "Estimate intensity 0-100 based on this plan photo. Return only the number.",
                         { inlineData: { data: base64, mimeType: file.type } }
                     ]);
                     workoutScore = parseInt(result.response.text().trim()) || 0;
@@ -232,31 +253,17 @@
             reader.readAsDataURL(file);
         }
 
-        async function generateRecipe() {
-            const t = getTotals();
-            const remP = Math.max(0, 180 - t.p);
-            const modal = document.getElementById('recipe-modal');
-            const content = document.getElementById('recipe-content');
-            
-            modal.classList.remove('hidden');
-            content.innerText = "Consulting Gemini AI for remaining macros...";
-            
-            try {
-                const result = await model.generateContent(`I have ${remP}g of protein remaining today. Suggest a quick, fitness-focused recipe to help me hit this target. Use simple ingredients. Format with a Title and Steps.`);
-                content.innerText = result.response.text();
-            } catch (err) {
-                content.innerText = "AI offline. Try again later.";
-            }
-        }
-
         function saveAndRefresh() {
-            const t = getTotals();
+            const t = mealArray.reduce((acc, m) => ({
+                p: acc.p + m.p, c: acc.c + m.c, f: acc.f + m.f, cal: acc.cal + (m.p*4 + m.c*4 + m.f*9)
+            }), {p:0, c:0, f:0, cal:0});
+
             document.getElementById('total-p').innerText = t.p.toFixed(1);
             document.getElementById('total-c').innerText = t.c.toFixed(1);
             document.getElementById('total-f').innerText = t.f.toFixed(1);
             document.getElementById('total-cal').innerText = Math.round(t.cal);
             
-            let score = (Math.min(t.p/180, 1)*70);
+            let score = (Math.min(t.p/180, 1)*100);
             if(!restMode) score = (score * 0.7) + (workoutScore * 0.3);
 
             const dg = document.getElementById('overall-grade');
@@ -266,44 +273,42 @@
             document.getElementById('p-bar').style.width = Math.min((t.p/180)*100, 100) + "%";
             document.getElementById('p-pct').innerText = Math.round(Math.min((t.p/180)*100, 100)) + "%";
 
-            localStorage.setItem("fit_os_pro_v13", JSON.stringify({
+            localStorage.setItem("fit_os_pro_v16", JSON.stringify({
                 meals: mealArray, water: document.getElementById('water-total').value,
                 workout: workoutScore, date: new Date().toLocaleDateString(), rest: restMode
             }));
             renderLog();
         }
 
-        function getTotals() {
-            return mealArray.reduce((acc, m) => ({
-                p: acc.p + m.p, c: acc.c + m.c, f: acc.f + m.f, cal: acc.cal + (m.p*4 + m.c*4 + m.f*9)
-            }), {p:0, c:0, f:0, cal:0});
-        }
-
         function renderLog() {
             document.getElementById('food-log').innerHTML = mealArray.map(m => `
                 <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-2xl border border-slate-800 mb-2">
-                    <p class="uppercase truncate flex-1 text-slate-100">${m.name}</p>
-                    <button onclick="window.removeMeal(${m.id})" class="text-slate-600 text-[9px] font-bold ml-2 active-tap">DEL</button>
+                    <p class="text-[10px] font-bold uppercase truncate flex-1 text-slate-100">${m.name}</p>
+                    <button id="del-${m.id}" class="text-slate-600 text-[9px] font-bold ml-2">DEL</button>
                 </div>
             `).join('');
+            mealArray.forEach(m => {
+                document.getElementById(`del-${m.id}`).onclick = () => { mealArray = mealArray.filter(x => x.id !== m.id); saveAndRefresh(); };
+            });
         }
 
-        window.removeMeal = (id) => { mealArray = mealArray.filter(m => m.id !== id); saveAndRefresh(); };
-
         async function archive() {
-            const t = getTotals();
-            const entry = {
+            const t = mealArray.reduce((acc, m) => ({
+                p: acc.p + m.p, c: acc.c + m.c, f: acc.f + m.f, cal: acc.cal + (m.p*4 + m.c*4 + m.f*9)
+            }), {p:0, c:0, f:0, cal:0});
+            const payload = {
                 date: new Date().toLocaleDateString(),
                 p: t.p.toFixed(1), c: t.c.toFixed(1), f: t.f.toFixed(1),
                 cal: Math.round(t.cal), status: restMode ? "REST" : workoutScore + "%",
-                water: document.getElementById('water-total').value
+                water: document.getElementById('water-total').value,
+                grade: document.getElementById('overall-grade').innerText
             };
-            await fetch(GS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(entry) });
-            alert("Day Saved to Cloud.");
+            await fetch(GS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            alert("Day Synced to Cloud.");
         }
 
         function load() {
-            const s = JSON.parse(localStorage.getItem("fit_os_pro_v13"));
+            const s = JSON.parse(localStorage.getItem("fit_os_pro_v16"));
             if(s && s.date === new Date().toLocaleDateString()) {
                 mealArray = s.meals || []; 
                 document.getElementById('water-total').value = s.water || 0;
