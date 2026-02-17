@@ -4,178 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FitnessOS</title>
-    
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/84/84145.png">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/84/84145.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#020617">
-
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="importmap"> { "imports": { "@google/generative-ai": "https://esm.run/@google/generative-ai" } } </script>
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono&display=swap');
-        body { background: #020617; font-family: 'Inter', sans-serif; color: #e2e8f0; margin: 0; overflow-x: hidden; }
-        .glass-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { background: #020617; font-family: 'Inter', sans-serif; color: #e2e8f0; margin: 0; }
+        .glass-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        /* High-Impact Titles */
+        .panel-title { font-size: 16px; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; color: #cbd5e1; margin-bottom: 14px; display: block; }
         .active-tap:active { transform: scale(0.95); opacity: 0.8; }
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .custom-scrollbar::-webkit-scrollbar { height: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        #workout-section { max-height: 500px; opacity: 1; margin-bottom: 1.5rem; }
+        #workout-section { transition: all 0.4s ease; overflow: hidden; }
         .hidden-workout { max-height: 0 !important; opacity: 0 !important; margin-bottom: 0 !important; pointer-events: none; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
 <body>
 
     <div id="auth-screen" class="fixed inset-0 z-[100] bg-[#020617] flex flex-col items-center justify-center p-6 transition-opacity duration-500">
-        <img src="https://cdn-icons-png.flaticon.com/512/84/84145.png" class="w-16 h-16 invert mb-8 opacity-20" alt="Logo">
+        <img src="https://cdn-icons-png.flaticon.com/512/84/84145.png" class="w-16 h-16 invert mb-8 opacity-20">
         <h2 class="text-slate-500 font-mono text-[10px] tracking-[0.3em] uppercase mb-4">Security Challenge</h2>
-        <input type="password" id="pin-input" inputmode="numeric" placeholder="••••" maxlength="4" 
-               class="bg-slate-900 border border-slate-800 rounded-2xl p-4 w-40 text-center text-2xl tracking-[0.5em] text-blue-500 outline-none focus:border-blue-500 transition-all">
-        <button id="unlock-btn" class="mt-6 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-8 rounded-xl text-xs uppercase tracking-widest active-tap">Unlock OS</button>
+        <input type="password" id="pin-input" inputmode="numeric" placeholder="••••" maxlength="4" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 w-40 text-center text-2xl tracking-[0.5em] text-blue-500 outline-none">
+        <button onclick="checkPin()" class="mt-6 bg-slate-800 text-white font-bold py-3 px-8 rounded-xl text-xs uppercase tracking-widest active-tap">Unlock OS</button>
     </div>
 
-    <div id="main-app" class="opacity-0 pointer-events-none transition-opacity duration-700">
-        
-        <div class="fixed top-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 p-2">
-            <div class="max-w-xl mx-auto flex items-center gap-2 px-2">
-                <div class="flex-1">
-                    <div class="flex justify-between text-[9px] font-bold mb-1 text-blue-400 font-mono uppercase tracking-tighter">
-                        <span>Protein Target</span> <span id="p-pct">0%</span>
-                    </div>
-                    <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
-                        <div id="p-bar" class="bg-blue-500 h-full transition-all duration-700 shadow-[0_0_8px_#3b82f6]" style="width: 0%"></div>
-                    </div>
+    <div id="main-app" class="hidden opacity-0 transition-opacity duration-700">
+        <div class="fixed top-0 left-0 w-full z-50 bg-slate-900/95 border-b border-slate-800 p-2">
+            <div class="max-w-xl mx-auto">
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="p-bar" class="bg-blue-500 h-full transition-all duration-700 shadow-[0_0_10px_#3b82f6]" style="width: 0%"></div>
                 </div>
-                <button id="recipe-ai-btn" class="bg-amber-500/20 text-amber-400 text-[8px] px-2 py-1 rounded font-bold uppercase border border-amber-500/30 active-tap italic">AI Recipe</button>
             </div>
         </div>
 
-        <div class="max-w-xl mx-auto px-4 pt-16 pb-32">
+        <div class="max-w-xl mx-auto px-4 pt-12 pb-32">
             <div class="flex justify-between items-start mb-8">
                 <div class="flex items-center gap-3">
                     <img src="https://cdn-icons-png.flaticon.com/512/84/84145.png" class="w-8 h-8 invert opacity-80">
                     <h1 class="text-2xl font-black italic tracking-tighter uppercase leading-none">Fitness<span id="brand-suffix" class="text-blue-500">OS</span></h1>
                 </div>
-                <div id="overall-grade" class="text-5xl font-black text-emerald-400 leading-none">A+</div>
+                <div id="overall-grade" class="text-5xl font-black text-emerald-400">A+</div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 mb-4 text-center">
+            <div class="grid grid-cols-2 gap-3 mb-6">
                 <div class="glass-card p-5 rounded-3xl border-b-2 border-blue-500/50">
-                    <p class="text-[8px] text-slate-500 uppercase font-mono mb-1 tracking-widest">Protein</p>
-                    <p class="text-3xl font-black text-blue-400 tracking-tighter"><span id="total-p">0</span>g</p>
+                    <span class="panel-title text-blue-400">PROTEIN</span>
+                    <p class="text-3xl font-black"><span id="total-p">0</span>g</p>
                 </div>
-                <div class="glass-card p-5 rounded-3xl border-b-2 border-slate-700">
-                    <p class="text-[8px] text-slate-500 uppercase font-mono mb-1 tracking-widest">Calories</p>
-                    <p class="text-3xl font-black text-white tracking-tighter" id="total-cal">0</p>
+                <div class="glass-card p-5 rounded-3xl border-b-2 border-slate-500">
+                    <span class="panel-title">CALORIES</span>
+                    <p class="text-3xl font-black" id="total-cal">0</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 mb-6 text-center">
-                <div class="glass-card p-4 rounded-3xl border-l-2 border-orange-500/30">
-                    <p class="text-[8px] text-slate-500 uppercase font-mono mb-1 tracking-widest text-orange-500/80">Carbs</p>
-                    <p class="text-xl font-black text-orange-400 tracking-tighter"><span id="total-c">0</span>g</p>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="glass-card p-5 rounded-3xl border-l-2 border-orange-500">
+                    <span class="panel-title text-orange-500">CARBS</span>
+                    <p class="text-xl font-black"><span id="total-c">0</span>g</p>
                 </div>
-                <div class="glass-card p-4 rounded-3xl border-l-2 border-yellow-500/30">
-                    <p class="text-[8px] text-slate-500 uppercase font-mono mb-1 tracking-widest text-yellow-500/80">Fats</p>
-                    <p class="text-xl font-black text-yellow-400 tracking-tighter"><span id="total-f">0</span>g</p>
+                <div class="glass-card p-5 rounded-3xl border-l-2 border-yellow-500">
+                    <span class="panel-title text-yellow-500">FATS</span>
+                    <p class="text-xl font-black"><span id="total-f">0</span>g</p>
                 </div>
             </div>
 
             <div class="glass-card p-5 rounded-3xl mb-6 border-l-4 border-cyan-500">
-                <p class="text-[9px] text-cyan-500 uppercase mb-3 font-mono font-bold tracking-widest">Hydration</p>
+                <span class="panel-title text-cyan-500">HYDRATION</span>
                 <div class="flex items-center justify-between">
-                    <button id="water-minus" class="bg-slate-800 text-white w-12 h-12 rounded-2xl font-black active-tap border border-slate-700">−</button>
+                    <button onclick="addWater(-250)" class="bg-slate-800 text-white w-12 h-12 rounded-xl font-black border border-slate-700 active-tap">-</button>
                     <div class="text-center">
-                        <input type="number" id="water-total" value="0" class="bg-transparent text-3xl font-black font-mono text-white w-24 text-center outline-none border-none p-0 focus:ring-0">
-                        <p class="text-[8px] text-slate-500 uppercase tracking-widest">milliliters</p>
+                        <input type="number" id="water-total" value="0" oninput="saveAndRefresh()" class="bg-transparent text-3xl font-black text-white w-24 text-center outline-none">
+                        <p class="text-[8px] text-slate-500 font-bold uppercase tracking-widest">milliliters</p>
                     </div>
-                    <button id="water-plus" class="bg-cyan-600 text-white w-12 h-12 rounded-2xl font-black active-tap shadow-lg">+</button>
+                    <button onclick="addWater(250)" class="bg-cyan-600 text-white w-12 h-12 rounded-xl font-black shadow-lg active-tap">+</button>
                 </div>
             </div>
 
             <div class="glass-card p-5 rounded-3xl mb-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Nutrition Log</h3>
-                    <button id="add-meal-btn" class="bg-emerald-500 text-black font-black w-8 h-8 rounded-full shadow-lg text-lg active-tap">+</button>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="panel-title">NUTRITION LOG</span>
+                    <button onclick="openModal()" class="bg-emerald-500 text-black font-black w-8 h-8 rounded-full shadow-lg text-lg active-tap">+</button>
                 </div>
-                <div id="food-log" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                <div id="food-log" class="space-y-2"></div>
             </div>
 
-            <div id="workout-section" class="glass-card p-6 rounded-3xl border-l-4 border-blue-500 overflow-hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-[9px] font-bold text-blue-400 uppercase tracking-widest font-mono">Plan Analysis (AI)</h3>
-                    <span id="work-val" class="text-blue-400 font-black text-lg">0%</span>
-                </div>
-                <label class="w-full bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center cursor-pointer block">
-                    <input type="file" id="workout-img" accept="image/*" class="hidden">
-                    <span id="ai-status" class="text-[10px] text-slate-400 font-mono uppercase tracking-widest">Upload Plan Image</span>
-                </label>
+            <div id="workout-section" class="glass-card p-6 rounded-3xl border-l-4 border-blue-500 mb-6">
+                <span class="panel-title text-blue-400">WORKOUT INTENSITY</span>
+                <input type="range" id="work-range" min="0" max="100" value="0" oninput="saveAndRefresh()" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                <div class="text-right mt-2 text-blue-400 font-black text-2xl"><span id="work-val">0</span>%</div>
             </div>
 
-            <div class="glass-card p-5 rounded-3xl mb-12 border-l-4 border-purple-500 flex justify-between items-center mt-6">
-                <h3 class="text-[9px] font-bold text-purple-400 uppercase font-mono tracking-widest">Rest Day Mode</h3>
-                <button id="rest-btn" class="bg-slate-800 text-[10px] font-bold px-5 py-2 rounded-full border border-slate-700 active-tap uppercase">Off</button>
+            <div class="glass-card p-5 rounded-3xl mb-8 border-l-4 border-emerald-500">
+                <span class="panel-title text-emerald-500">RECOVERY STATS</span>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-800/50 rounded-xl p-3 text-center">
+                        <p class="text-[8px] text-slate-600 uppercase mb-1 font-bold">Sleep Hrs</p>
+                        <input type="number" id="sleep-hours" placeholder="8" oninput="saveAndRefresh()" class="bg-transparent w-full text-center outline-none text-xs border-none p-0">
+                    </div>
+                    <div class="bg-slate-800/50 rounded-xl p-3 text-center">
+                        <p class="text-[8px] text-slate-600 uppercase mb-1 font-bold">Cardio Min</p>
+                        <input type="number" id="cardio-mins" placeholder="30" oninput="saveAndRefresh()" class="bg-transparent w-full text-center outline-none text-xs border-none p-0">
+                    </div>
+                </div>
             </div>
-            
-            <button id="archive-btn" class="w-full bg-white text-black font-black py-5 rounded-2xl uppercase text-xs tracking-[0.2em] italic shadow-xl active-tap">Archive Day & Sync</button>
+
+            <div class="glass-card p-5 rounded-3xl mb-8 border-l-4 border-purple-500 flex justify-between items-center">
+                <span class="panel-title text-purple-500 m-0">REST DAY MODE</span>
+                <button onclick="toggleRest()" id="rest-btn" class="bg-slate-800 text-[10px] font-bold px-6 py-2 rounded-full border border-slate-700 uppercase active-tap">Off</button>
+            </div>
+
+            <button onclick="archive()" class="w-full bg-white text-black font-black py-5 rounded-2xl uppercase text-xs tracking-[0.2em] italic shadow-xl active-tap">Archive Day & Sync</button>
         </div>
     </div>
 
-    <div id="macro-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
+    <div id="macro-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/95">
         <div class="glass-card w-full max-w-sm p-6 rounded-3xl border border-emerald-500/30">
-            <p class="text-[9px] text-slate-500 uppercase mb-2 font-bold font-mono tracking-widest">Recent Meals</p>
-            <div id="recent-meals-list" class="flex gap-2 overflow-x-auto pb-4 mb-4 custom-scrollbar">
-                <span class="text-[8px] text-slate-600 uppercase">Loading history...</span>
-            </div>
-
-            <input id="m-name" type="text" placeholder="Meal Name" class="w-full bg-slate-900 p-4 rounded-xl mb-4 text-sm border-none outline-none text-white">
+            <span class="panel-title">SELECT RECENT</span>
+            <div id="recent-meals-list" class="flex gap-2 overflow-x-auto pb-4 mb-4"></div>
+            <input id="m-name" type="text" placeholder="Meal Name" class="w-full bg-slate-900 p-4 rounded-xl mb-4 text-sm outline-none border-none text-white">
             <div class="grid grid-cols-3 gap-3 mb-6">
-                <input id="m-p" type="number" placeholder="P" class="bg-slate-900 p-4 rounded-xl text-center text-sm text-white">
-                <input id="m-c" type="number" placeholder="C" class="bg-slate-900 p-4 rounded-xl text-center text-sm text-white">
-                <input id="m-f" type="number" placeholder="F" class="bg-slate-900 p-4 rounded-xl text-center text-sm text-white">
+                <input id="m-p" type="number" placeholder="P" class="bg-slate-900 p-4 rounded-xl text-center text-white border-none">
+                <input id="m-c" type="number" placeholder="C" class="bg-slate-900 p-4 rounded-xl text-center text-white border-none">
+                <input id="m-f" type="number" placeholder="F" class="bg-slate-900 p-4 rounded-xl text-center text-white border-none">
             </div>
             <div class="flex gap-2">
-                <button id="close-modal-btn" class="flex-1 bg-slate-800 py-4 rounded-xl text-[10px] font-bold uppercase">Cancel</button>
-                <button id="save-meal-btn" class="flex-1 bg-emerald-500 text-black py-4 rounded-xl text-[10px] font-bold uppercase">Log</button>
+                <button onclick="closeModal()" class="flex-1 bg-slate-800 py-4 rounded-xl text-[10px] font-bold uppercase">Cancel</button>
+                <button onclick="logMeal()" class="flex-1 bg-emerald-500 text-black py-4 rounded-xl text-[10px] font-bold uppercase">Log Meal</button>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        import { GoogleGenerativeAI } from "@google/generative-ai";
-
+    <script>
         const PIN_CODE = "0805";
-        const GEMINI_KEY = "AIzaSyBhHxGnIsxERj2-J0BADPPRyv0CXTfcWRU";
-        const GS_URL = "https://script.google.com/macros/s/AKfycbyCteDvsJn5cL8gJu_qBkoVor9wjkd-yXN05QVSlw7M9Qe21SKXrciQXuMLKx2GRrNiKg/exec";
-        
-        const genAI = new GoogleGenerativeAI(GEMINI_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+        const GS_URL = "https://script.google.com/macros/s/AKfycbwAl1-jhLhTcTetfFpLhsD37k_whSlFWPm--BOUpco5H1JPNYEriPJaP4kJDRTXd0yeXg/exec";
         let mealArray = [];
-        let workoutScore = 0;
-        let restMode = false;
+        let isRest = false;
 
-        document.getElementById('unlock-btn').addEventListener('click', () => {
+        function checkPin() {
             if(document.getElementById('pin-input').value === PIN_CODE) {
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('main-app').style.opacity = '1';
-                document.getElementById('main-app').style.pointerEvents = 'auto';
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                setTimeout(() => document.getElementById('main-app').style.opacity = '1', 50);
                 load();
-                fetchRecent();
             } else { alert("ACCESS DENIED"); }
-        });
-
-        document.getElementById('rest-btn').addEventListener('click', toggleRest);
-        document.getElementById('water-plus').addEventListener('click', () => updateWater(250));
-        document.getElementById('water-minus').addEventListener('click', () => updateWater(-250));
-        document.getElementById('add-meal-btn').addEventListener('click', () => document.getElementById('macro-modal').classList.remove('hidden'));
-        document.getElementById('close-modal-btn').addEventListener('click', () => document.getElementById('macro-modal').classList.add('hidden'));
-        document.getElementById('save-meal-btn').addEventListener('click', logMeal);
-        document.getElementById('archive-btn').addEventListener('click', archive);
-        document.getElementById('workout-img').addEventListener('change', analyzeWorkout);
-        document.getElementById('water-total').addEventListener('input', saveAndRefresh);
+        }
 
         async function fetchRecent() {
             try {
@@ -183,12 +157,9 @@
                 const data = await response.json();
                 const list = document.getElementById('recent-meals-list');
                 list.innerHTML = data.map(m => `
-                    <button id="btn-${m.name.replace(/\s+/g, '')}" class="bg-slate-800 px-3 py-2 rounded-xl text-[9px] whitespace-nowrap border border-slate-700 text-slate-300 font-bold active-tap uppercase">${m.name}</button>
+                    <button onclick='fillMeal(${JSON.stringify(m)})' class="bg-slate-800 px-4 py-2 rounded-xl text-[10px] whitespace-nowrap border border-slate-700 text-slate-300 font-bold active-tap uppercase">${m.name}</button>
                 `).join('');
-                data.forEach(m => {
-                    document.getElementById(`btn-${m.name.replace(/\s+/g, '')}`).onclick = () => fillMeal(m);
-                });
-            } catch (e) { document.getElementById('recent-meals-list').innerText = "NO DATA"; }
+            } catch (e) {}
         }
 
         window.fillMeal = (m) => {
@@ -199,58 +170,39 @@
         };
 
         function toggleRest() {
-            restMode = !restMode;
+            isRest = !isRest;
             const btn = document.getElementById('rest-btn');
-            const workoutSec = document.getElementById('workout-section');
             const suffix = document.getElementById('brand-suffix');
-            
-            if(restMode) {
-                btn.innerText = "On"; btn.classList.replace('bg-slate-800', 'bg-purple-900/40');
-                workoutSec.classList.add('hidden-workout');
-                suffix.className = "text-purple-500";
-                workoutScore = 0;
-            } else {
-                btn.innerText = "Off"; btn.classList.replace('bg-purple-900/40', 'bg-slate-800');
-                workoutSec.classList.remove('hidden-workout');
-                suffix.className = "text-blue-500";
-            }
+            const workSec = document.getElementById('workout-section');
+            btn.innerText = isRest ? "On" : "Off";
+            btn.className = isRest ? "bg-purple-900/40 text-purple-400 text-[10px] font-bold px-6 py-2 rounded-full border border-purple-500/50 uppercase" : "bg-slate-800 text-slate-400 text-[10px] font-bold px-6 py-2 rounded-full border border-slate-700 uppercase";
+            suffix.className = isRest ? "text-purple-500" : "text-blue-500";
+            if(isRest) { workSec.classList.add('hidden-workout'); document.getElementById('work-range').value = 0; }
+            else { workSec.classList.remove('hidden-workout'); }
             saveAndRefresh();
         }
 
-        function updateWater(val) {
+        function addWater(val) {
             const el = document.getElementById('water-total');
             el.value = Math.max(0, (parseInt(el.value) || 0) + val);
             saveAndRefresh();
         }
 
-        function logMeal() {
+        async function logMeal() {
             const p = parseFloat(document.getElementById('m-p').value) || 0;
             const c = parseFloat(document.getElementById('m-c').value) || 0;
             const f = parseFloat(document.getElementById('m-f').value) || 0;
-            mealArray.push({ id: Date.now(), name: document.getElementById('m-name').value || "Meal", p, c, f });
-            document.getElementById('macro-modal').classList.add('hidden');
-            saveAndRefresh();
+            const name = document.getElementById('m-name').value || "Meal";
+            const mealObj = { id: Date.now(), name, p, c, f, type: "meal" };
+            mealArray.push(mealObj);
+            closeModal(); saveAndRefresh();
+            await fetch(GS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(mealObj) });
         }
 
-        async function analyzeWorkout(e) {
-            const file = e.target.files[0];
-            if(!file || restMode) return;
-            document.getElementById('ai-status').innerText = "AI Scanning Plan...";
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-                const base64 = reader.result.split(',')[1];
-                try {
-                    const result = await model.generateContent([
-                        "Estimate intensity 0-100 based on this plan photo. Return only the number.",
-                        { inlineData: { data: base64, mimeType: file.type } }
-                    ]);
-                    workoutScore = parseInt(result.response.text().trim()) || 0;
-                    document.getElementById('work-val').innerText = workoutScore + "%";
-                    document.getElementById('ai-status').innerText = "Verified ✓";
-                    saveAndRefresh();
-                } catch (err) { document.getElementById('ai-status').innerText = "Scan Failed"; }
-            };
-            reader.readAsDataURL(file);
+        async function removeMeal(id) {
+            mealArray = mealArray.filter(m => m.id !== id);
+            saveAndRefresh();
+            await fetch(GS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", id: id }) });
         }
 
         function saveAndRefresh() {
@@ -258,24 +210,23 @@
                 p: acc.p + m.p, c: acc.c + m.c, f: acc.f + m.f, cal: acc.cal + (m.p*4 + m.c*4 + m.f*9)
             }), {p:0, c:0, f:0, cal:0});
 
+            const work = document.getElementById('work-range').value;
+            document.getElementById('work-val').innerText = work;
             document.getElementById('total-p').innerText = t.p.toFixed(1);
             document.getElementById('total-c').innerText = t.c.toFixed(1);
             document.getElementById('total-f').innerText = t.f.toFixed(1);
             document.getElementById('total-cal').innerText = Math.round(t.cal);
             
-            let score = (Math.min(t.p/180, 1)*100);
-            if(!restMode) score = (score * 0.7) + (workoutScore * 0.3);
-
-            const dg = document.getElementById('overall-grade');
-            dg.innerText = score > 85 ? 'A+' : (score > 60 ? 'B' : 'C');
-            dg.className = `text-5xl font-black leading-none ${score > 85 ? 'text-emerald-400' : 'text-blue-400'}`;
-            
+            let score = (Math.min(t.p/180, 1)*70) + (isRest ? 30 : work*0.3);
+            document.getElementById('overall-grade').innerText = score > 85 ? 'A+' : (score > 60 ? 'B' : 'C');
             document.getElementById('p-bar').style.width = Math.min((t.p/180)*100, 100) + "%";
-            document.getElementById('p-pct').innerText = Math.round(Math.min((t.p/180)*100, 100)) + "%";
 
-            localStorage.setItem("fit_os_pro_v16", JSON.stringify({
+            localStorage.setItem("fit_os_v17_1", JSON.stringify({
                 meals: mealArray, water: document.getElementById('water-total').value,
-                workout: workoutScore, date: new Date().toLocaleDateString(), rest: restMode
+                date: new Date().toLocaleDateString(), rest: isRest,
+                sleep: document.getElementById('sleep-hours').value,
+                cardio: document.getElementById('cardio-mins').value,
+                work: work
             }));
             renderLog();
         }
@@ -283,13 +234,10 @@
         function renderLog() {
             document.getElementById('food-log').innerHTML = mealArray.map(m => `
                 <div class="flex justify-between items-center bg-slate-900/60 p-3 rounded-2xl border border-slate-800 mb-2">
-                    <p class="text-[10px] font-bold uppercase truncate flex-1 text-slate-100">${m.name}</p>
-                    <button id="del-${m.id}" class="text-slate-600 text-[9px] font-bold ml-2">DEL</button>
+                    <p class="text-[11px] font-black uppercase truncate flex-1 text-slate-100">${m.name}</p>
+                    <button onclick="removeMeal(${m.id})" class="text-slate-600 text-[9px] font-black ml-2 active-tap uppercase">DEL</button>
                 </div>
             `).join('');
-            mealArray.forEach(m => {
-                document.getElementById(`del-${m.id}`).onclick = () => { mealArray = mealArray.filter(x => x.id !== m.id); saveAndRefresh(); };
-            });
         }
 
         async function archive() {
@@ -297,23 +245,29 @@
                 p: acc.p + m.p, c: acc.c + m.c, f: acc.f + m.f, cal: acc.cal + (m.p*4 + m.c*4 + m.f*9)
             }), {p:0, c:0, f:0, cal:0});
             const payload = {
-                date: new Date().toLocaleDateString(),
-                p: t.p.toFixed(1), c: t.c.toFixed(1), f: t.f.toFixed(1),
-                cal: Math.round(t.cal), status: restMode ? "REST" : workoutScore + "%",
+                type: "archive",
+                p: t.p.toFixed(1), c: t.c.toFixed(1), f: t.f.toFixed(1), cal: Math.round(t.cal),
+                workout: isRest ? "REST" : document.getElementById('work-range').value + "%",
                 water: document.getElementById('water-total').value,
-                grade: document.getElementById('overall-grade').innerText
+                grade: document.getElementById('overall-grade').innerText,
+                sleep: document.getElementById('sleep-hours').value || 0,
+                cardio: document.getElementById('cardio-mins').value || 0
             };
             await fetch(GS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("Day Synced to Cloud.");
+            alert("Day Archived Successfully.");
         }
 
+        function openModal() { document.getElementById('macro-modal').classList.remove('hidden'); fetchRecent(); }
+        function closeModal() { document.getElementById('macro-modal').classList.add('hidden'); }
+        
         function load() {
-            const s = JSON.parse(localStorage.getItem("fit_os_pro_v16"));
+            const s = JSON.parse(localStorage.getItem("fit_os_v17_1"));
             if(s && s.date === new Date().toLocaleDateString()) {
                 mealArray = s.meals || []; 
                 document.getElementById('water-total').value = s.water || 0;
-                workoutScore = s.workout || 0;
-                document.getElementById('work-val').innerText = workoutScore + "%";
+                document.getElementById('sleep-hours').value = s.sleep || "";
+                document.getElementById('cardio-mins').value = s.cardio || "";
+                document.getElementById('work-range').value = s.work || 0;
                 if(s.rest) toggleRest();
                 saveAndRefresh();
             }
